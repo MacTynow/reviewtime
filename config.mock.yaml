@@ -1,0 +1,37 @@
+# Mock Configuration for Testing/Development
+# This configuration uses mock connectors that generate fake data
+# No API tokens or authentication required!
+# AI summaries are automatically generated using mock data (no ANTHROPIC_API_KEY needed)
+
+sources:
+  # Disable real sources
+  github:
+    enabled: false
+
+  slack:
+    enabled: false
+
+  email:
+    enabled: false
+
+  # Enable mock sources with fake data
+  github_mock:
+    enabled: true
+    username: "demo_developer"
+    # Optional: Filter to specific repos (comment out to get all)
+    # repos:
+    #   - "acme-corp/backend"
+    #   - "acme-corp/frontend"
+
+  slack_mock:
+    enabled: true
+    # Optional: Filter to specific channels (comment out to get all)
+    # Useful to reduce noise from #random, #standup, etc.
+    # channels:
+    #   - "C01ABC123"  # #engineering
+    #   - "C02DEF456"  # #backend-team
+    #   - "C03GHI789"  # #devops
+
+  email_mock:
+    enabled: true
+    email: "developer@acme-corp.com"

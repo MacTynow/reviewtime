@@ -1,0 +1,52 @@
+[project]
+name = "weekly-summary"
+version = "0.1.0"
+description = "Weekly work summary generator that aggregates data from GitHub, Slack, and Email"
+readme = "README.md"
+authors = [
+    { name = "Charles Martinot", email = "charles.martinot@protonmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "PyGithub>=2.1.1",
+    "slack-sdk>=3.27.0",
+    "click>=8.1.7",
+    "python-dateutil>=2.8.2",
+    "pyyaml>=6.0.1",
+    "imap-tools>=1.11.0",
+    "anthropic>=0.75.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "black>=24.0.0",
+    "ruff>=0.3.0",
+]
+
+[project.scripts]
+weekly-summary = "weekly_summary.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.8.0,<0.9"]
+build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+omit = [
+    "src/weekly_summary/connectors/github.py",
+    "src/weekly_summary/connectors/slack.py",
+    "src/weekly_summary/connectors/email.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]

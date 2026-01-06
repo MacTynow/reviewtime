@@ -1,0 +1,27 @@
+baseURL = 'http://localhost:1313/'
+languageCode = 'en-us'
+title = 'Weekly Work Summary'
+theme = 'weekly-summary'
+
+# Use the reports directory as content
+contentDir = '../reports'
+
+# Pagination
+[pagination]
+  pagerSize = 10
+
+# Build settings
+[build]
+  writeStats = true
+
+# Menu
+[menu]
+  [[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 1
+
+# Params
+[params]
+  description = "Weekly work activity summaries aggregated from GitHub, Slack, and Email"
+  author = "Weekly Summary Generator"

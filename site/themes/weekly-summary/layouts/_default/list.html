@@ -1,0 +1,40 @@
+{{ define "title" }}{{ .Site.Title }}{{ end }}
+
+{{ define "main" }}
+<div class="container">
+    <h1>{{ .Title }}</h1>
+    {{ .Content }}
+    
+    {{ if .IsHome }}
+    <section class="summary-stats">
+        <h2>Recent Weekly Summaries</h2>
+    </section>
+    {{ end }}
+    
+    <div class="report-list">
+        {{ range .Pages }}
+        <article class="report-card">
+            <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+            <div class="report-meta">
+                <time datetime="{{ .Date.Format "2006-01-02" }}">
+                    {{ .Date.Format "January 2, 2006" }}
+                </time>
+                {{ if .Params.totalActivities }}
+                <span class="activity-count">{{ .Params.totalActivities }} activities</span>
+                {{ end }}
+            </div>
+            
+            {{ if .Params.sources }}
+            <div class="source-breakdown">
+                {{ range $source, $count := .Params.sources }}
+                <span class="source-tag">{{ $source }}: {{ $count }}</span>
+                {{ end }}
+            </div>
+            {{ end }}
+            
+            <a href="{{ .RelPermalink }}" class="read-more">View Report →</a>
+        </article>
+        {{ end }}
+    </div>
+</div>
+{{ end }}

@@ -1,0 +1,44 @@
+{{ define "title" }}{{ .Title }} - {{ .Site.Title }}{{ end }}
+
+{{ define "main" }}
+<div class="container">
+    <article class="report-single">
+        <div class="report-header">
+            <div class="report-meta-info">
+                <time datetime="{{ .Date.Format "2006-01-02" }}">
+                    {{ .Date.Format "January 2, 2006" }}
+                </time>
+                {{ if .Params.endDate }}
+                <span class="date-separator">to</span>
+                <time datetime="{{ .Params.endDate }}">
+                    {{ dateFormat "January 2, 2006" .Params.endDate }}
+                </time>
+                {{ end }}
+            </div>
+            
+            {{ if .Params.sources }}
+            <div class="report-stats">
+                <div class="stat-item">
+                    <span class="stat-value">{{ .Params.totalActivities }}</span>
+                    <span class="stat-label">Total Activities</span>
+                </div>
+                {{ range $source, $count := .Params.sources }}
+                <div class="stat-item">
+                    <span class="stat-value">{{ $count }}</span>
+                    <span class="stat-label">{{ $source | title }}</span>
+                </div>
+                {{ end }}
+            </div>
+            {{ end }}
+        </div>
+        
+        <div class="report-content">
+            {{ .Content }}
+        </div>
+        
+        <div class="report-footer">
+            <a href="/" class="back-link">← Back to all reports</a>
+        </div>
+    </article>
+</div>
+{{ end }}

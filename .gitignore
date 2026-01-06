@@ -1,0 +1,20 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Generated reports (optional - commit these if you want to version them)
+# reports/*.md
+
+# Hugo generated files
+site/public/
+site/resources/
+
+# Configuration files with secrets
+config.yaml

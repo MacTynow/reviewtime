@@ -1,0 +1,13 @@
+<header class="site-header">
+    <div class="container">
+        <div class="header-content">
+            <h1 class="site-title"><a href="{{ "/" | relURL }}">{{ .Site.Title }}</a></h1>
+            <p class="site-description">{{ .Site.Params.description }}</p>
+        </div>
+        <nav class="site-nav">
+            {{ range .Site.Menus.main }}
+            <a href="{{ .URL | relURL }}" class="nav-link">{{ .Name }}</a>
+            {{ end }}
+        </nav>
+    </div>
+</header>

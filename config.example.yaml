@@ -1,0 +1,49 @@
+# Weekly Summary Configuration
+
+sources:
+  # GitHub configuration
+  github:
+    enabled: true
+    token: "ghp_your_github_personal_access_token_here"
+    username: "your_github_username"
+    # Optional: Limit to specific repositories (format: "owner/repo")
+    # repos:
+    #   - "owner/repo1"
+    #   - "owner/repo2"
+
+  # Slack configuration
+  slack:
+    enabled: true
+    token: "xoxp-your_slack_user_token_here"
+    # Optional: Limit to specific channels (use channel IDs)
+    # channels:
+    #   - "C1234567890"
+    #   - "C0987654321"
+
+  # Email configuration (IMAP)
+  email:
+    enabled: true
+    host: "imap.gmail.com"  # Or imap-mail.outlook.com for Outlook
+    email: "your_email@example.com"
+    password: "your_app_specific_password"
+    port: 993
+    use_ssl: true
+    # Optional: Specify folders to monitor
+    # folders:
+    #   - "INBOX"
+    #   - "Sent"
+
+  # ===== MOCK DATA SOURCES (for testing/development) =====
+  # Uncomment and use these instead of real sources to generate fake data
+  # No authentication required!
+
+  # github_mock:
+  #   enabled: true
+  #   username: "demo_user"  # Optional: customize the mock username
+
+  # slack_mock:
+  #   enabled: true
+
+  # email_mock:
+  #   enabled: true
+  #   email: "demo@example.com"  # Optional: customize the mock email

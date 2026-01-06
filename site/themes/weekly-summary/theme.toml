@@ -1,0 +1,9 @@
+name = "Weekly Summary"
+license = "MIT"
+description = "A clean theme for weekly work summaries"
+tags = ["blog", "minimal", "work", "summary"]
+features = ["responsive", "clean"]
+min_version = "0.145.0"
+
+[author]
+  name = "Weekly Summary Generator"
