@@ -118,7 +118,9 @@ def test_custom_output_filename(sample_activities):
         start_date = datetime(2024, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
         end_date = datetime(2024, 1, 7, 23, 59, 59, tzinfo=timezone.utc)
 
-        report_path = generator.generate(sample_activities, start_date, end_date, "custom-report.md")
+        report_path = generator.generate(
+            sample_activities, start_date, end_date, "custom-report.md"
+        )
 
         assert report_path.name == "custom-report.md"
 
@@ -153,7 +155,9 @@ def test_generate_report_with_summaries(sample_activities):
             "slack": "Team discussed architecture and planning.",
         }
 
-        report_path = generator.generate(sample_activities, start_date, end_date, summaries=summaries)
+        report_path = generator.generate(
+            sample_activities, start_date, end_date, summaries=summaries
+        )
 
         assert report_path.exists()
         content = report_path.read_text()
@@ -178,7 +182,9 @@ def test_generate_report_with_github_summary_only(sample_activities):
             "github": "GitHub work summary.",
         }
 
-        report_path = generator.generate(sample_activities, start_date, end_date, summaries=summaries)
+        report_path = generator.generate(
+            sample_activities, start_date, end_date, summaries=summaries
+        )
         content = report_path.read_text()
 
         assert "## 📝 Summary" in content
@@ -199,7 +205,9 @@ def test_generate_report_with_slack_summary_only(sample_activities):
             "slack": "Slack discussion summary.",
         }
 
-        report_path = generator.generate(sample_activities, start_date, end_date, summaries=summaries)
+        report_path = generator.generate(
+            sample_activities, start_date, end_date, summaries=summaries
+        )
         content = report_path.read_text()
 
         assert "## 📝 Summary" in content
@@ -216,7 +224,9 @@ def test_generate_report_with_empty_summaries(sample_activities):
         start_date = datetime(2024, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
         end_date = datetime(2024, 1, 7, 23, 59, 59, tzinfo=timezone.utc)
 
-        report_path = generator.generate(sample_activities, start_date, end_date, summaries={})
+        report_path = generator.generate(
+            sample_activities, start_date, end_date, summaries={}
+        )
         content = report_path.read_text()
 
         # Should not have summary section

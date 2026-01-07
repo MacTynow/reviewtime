@@ -10,7 +10,9 @@ def get_last_week_range() -> tuple[datetime, datetime]:
     Returns:
         Tuple of (start_date, end_date) for the last complete week
     """
-    today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    today = datetime.now(timezone.utc).replace(
+        hour=0, minute=0, second=0, microsecond=0
+    )
 
     # Find last Monday
     days_since_monday = (today.weekday() - 0) % 7
@@ -25,7 +27,9 @@ def get_last_week_range() -> tuple[datetime, datetime]:
     return last_monday, last_sunday
 
 
-def parse_date_range(start_str: str | None, end_str: str | None) -> tuple[datetime, datetime]:
+def parse_date_range(
+    start_str: str | None, end_str: str | None
+) -> tuple[datetime, datetime]:
     """
     Parse date strings into datetime objects, or use default last week range.
 

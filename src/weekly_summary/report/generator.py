@@ -68,7 +68,12 @@ class ReportGenerator:
 
         # Generate markdown content
         content = self._generate_markdown(
-            sorted_activities, activities_by_source, activities_by_day, start_date, end_date, summaries or {}
+            sorted_activities,
+            activities_by_source,
+            activities_by_day,
+            start_date,
+            end_date,
+            summaries or {},
         )
 
         # Write to file
@@ -90,13 +95,17 @@ class ReportGenerator:
 
         # Hugo front matter
         lines.append("---")
-        lines.append(f"title: \"Weekly Summary: {start_date.strftime('%B %d, %Y')} - {end_date.strftime('%B %d, %Y')}\"")
+        lines.append(
+            f"title: \"Weekly Summary: {start_date.strftime('%B %d, %Y')} - {end_date.strftime('%B %d, %Y')}\""
+        )
         lines.append(f"date: {start_date.strftime('%Y-%m-%d')}")
         lines.append(f"endDate: {end_date.strftime('%Y-%m-%d')}")
         lines.append(f"totalActivities: {len(all_activities)}")
 
         # Add source counts
-        source_counts = {source: len(activities) for source, activities in by_source.items()}
+        source_counts = {
+            source: len(activities) for source, activities in by_source.items()
+        }
         lines.append("sources:")
         for source, count in source_counts.items():
             lines.append(f"  {source}: {count}")
@@ -106,9 +115,13 @@ class ReportGenerator:
         lines.append("")
 
         # Header
-        lines.append(f"# Weekly Summary: {start_date.strftime('%B %d, %Y')} - {end_date.strftime('%B %d, %Y')}")
+        lines.append(
+            f"# Weekly Summary: {start_date.strftime('%B %d, %Y')} - {end_date.strftime('%B %d, %Y')}"
+        )
         lines.append("")
-        lines.append(f"*Generated on {datetime.now().strftime('%B %d, %Y at %I:%M %p')}*")
+        lines.append(
+            f"*Generated on {datetime.now().strftime('%B %d, %Y at %I:%M %p')}*"
+        )
         lines.append("")
 
         # AI-generated summaries (if available)
@@ -160,7 +173,9 @@ class ReportGenerator:
                 by_type[activity.activity_type].append(activity)
 
             for activity_type, typed_activities in by_type.items():
-                lines.append(f"#### {activity_type.replace('_', ' ').title()} ({len(typed_activities)})")
+                lines.append(
+                    f"#### {activity_type.replace('_', ' ').title()} ({len(typed_activities)})"
+                )
                 lines.append("")
 
                 for activity in typed_activities:
@@ -205,7 +220,9 @@ class ReportGenerator:
         if activity.description and activity.description.strip():
             # Indent description
             desc_lines = activity.description.split("\n")
-            formatted_desc = "\n  ".join([f"> {line.strip()}" for line in desc_lines if line.strip()])
+            formatted_desc = "\n  ".join(
+                [f"> {line.strip()}" for line in desc_lines if line.strip()]
+            )
             if formatted_desc:
                 line += f"\n  {formatted_desc}"
 

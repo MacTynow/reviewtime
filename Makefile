@@ -30,12 +30,12 @@ test:
 # Report generation
 generate-mock:
 	@echo "Generating report with mock data..."
-	uv run weekly-summary --config config.mock.yaml --start-date 2024-01-01 --end-date 2024-01-07
+	uv run weekly-summary generate --config config.mock.yaml --start-date 2024-01-01 --end-date 2024-01-07
 	@echo "Report generated in reports/"
 
 generate:
 	@echo "Generating report with real APIs..."
-	uv run weekly-summary --config config.yaml
+	uv run weekly-summary generate --config config.yaml
 	@echo "Report generated in reports/"
 
 # Hugo website

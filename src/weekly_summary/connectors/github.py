@@ -49,7 +49,9 @@ class GitHubConnector(BaseConnector):
         except GithubException as e:
             raise ValueError(f"GitHub API error: {e}")
 
-    def fetch_activities(self, start_date: datetime, end_date: datetime) -> list[Activity]:
+    def fetch_activities(
+        self, start_date: datetime, end_date: datetime
+    ) -> list[Activity]:
         """Fetch GitHub activities within the date range."""
         if not self.client:
             self.validate_config()
@@ -67,9 +69,15 @@ class GitHubConnector(BaseConnector):
 
         return sorted(activities)
 
-    def _fetch_commits(self, start_date: datetime, end_date: datetime) -> list[Activity]:
+    def _fetch_commits(
+        self, start_date: datetime, end_date: datetime
+    ) -> list[Activity]:
         """Fetch commits by the user."""
         activities = []
+
+        # Ensure client is initialized
+        if self.client is None:
+            return activities
 
         if self.repos:
             repos = [self.client.get_repo(repo) for repo in self.repos]
@@ -80,9 +88,15 @@ class GitHubConnector(BaseConnector):
 
         for repo in repos:
             try:
-                commits = repo.get_commits(author=self.username, since=start_date, until=end_date)
+                # username is validated in validate_config, so it's not None here
+                commits = repo.get_commits(
+                    author=self.username or "", since=start_date, until=end_date
+                )
                 for commit in commits:
-                    if commit.commit.author.date >= start_date and commit.commit.author.date <= end_date:
+                    if (
+                        commit.commit.author.date >= start_date
+                        and commit.commit.author.date <= end_date
+                    ):
                         activities.append(
                             Activity(
                                 timestamp=commit.commit.author.date,
@@ -94,8 +108,12 @@ class GitHubConnector(BaseConnector):
                                 metadata={
                                     "repo": repo.full_name,
                                     "sha": commit.sha,
-                                    "additions": commit.stats.additions if commit.stats else 0,
-                                    "deletions": commit.stats.deletions if commit.stats else 0,
+                                    "additions": (
+                                        commit.stats.additions if commit.stats else 0
+                                    ),
+                                    "deletions": (
+                                        commit.stats.deletions if commit.stats else 0
+                                    ),
                                 },
                             )
                         )
@@ -105,9 +123,15 @@ class GitHubConnector(BaseConnector):
 
         return activities
 
-    def _fetch_prs_created(self, start_date: datetime, end_date: datetime) -> list[Activity]:
+    def _fetch_prs_created(
+        self, start_date: datetime, end_date: datetime
+    ) -> list[Activity]:
         """Fetch PRs created by the user."""
         activities = []
+
+        # Ensure client is initialized
+        if self.client is None:
+            return activities
 
         # Search for PRs created by the user
         query = f"author:{self.username} is:pr created:{start_date.strftime('%Y-%m-%d')}..{end_date.strftime('%Y-%m-%d')}"
@@ -141,9 +165,15 @@ class GitHubConnector(BaseConnector):
 
         return activities
 
-    def _fetch_pr_reviews(self, start_date: datetime, end_date: datetime) -> list[Activity]:
+    def _fetch_pr_reviews(
+        self, start_date: datetime, end_date: datetime
+    ) -> list[Activity]:
         """Fetch PR reviews by the user."""
         activities = []
+
+        # Ensure client is initialized
+        if self.client is None:
+            return activities
 
         # Search for PRs where the user was requested as a reviewer or reviewed
         query = f"reviewed-by:{self.username} is:pr updated:{start_date.strftime('%Y-%m-%d')}..{end_date.strftime('%Y-%m-%d')}"

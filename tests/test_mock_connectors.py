@@ -44,7 +44,11 @@ class TestMockGitHubConnector:
         activity_types = {act.activity_type for act in activities}
 
         # Should have commits, PRs created, and PR reviews
-        assert "commit" in activity_types or "pr_created" in activity_types or "pr_review" in activity_types
+        assert (
+            "commit" in activity_types
+            or "pr_created" in activity_types
+            or "pr_review" in activity_types
+        )
 
     def test_activities_within_date_range(self):
         """Test that all activities fall within the requested date range."""

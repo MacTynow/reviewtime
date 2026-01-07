@@ -18,3 +18,11 @@ site/resources/
 
 # Configuration files with secrets
 config.yaml
+config.yaml.backup*
+*.yaml.backup*
+
+# Environment files with secrets
+.env
+.env.local
+*.key
+*.pem

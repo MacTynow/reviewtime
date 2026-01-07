@@ -3,6 +3,7 @@
 import os
 
 from anthropic import Anthropic
+from anthropic.types import TextBlock
 
 from .connectors.base import Activity
 
@@ -20,7 +21,9 @@ class ActivitySummarizer:
         """
         self.mock = mock
         self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY")
-        self.client = Anthropic(api_key=self.api_key) if self.api_key and not mock else None
+        self.client = (
+            Anthropic(api_key=self.api_key) if self.api_key and not mock else None
+        )
 
     def is_available(self) -> bool:
         """Check if summarization is available (API key configured or mock mode)."""
@@ -93,6 +96,10 @@ class ActivitySummarizer:
             return ""
 
         try:
+            # Ensure client is not None (checked in is_available)
+            if self.client is None:
+                return ""
+
             message = self.client.messages.create(
                 model="claude-3-5-sonnet-20241022",
                 max_tokens=500,
@@ -101,7 +108,10 @@ class ActivitySummarizer:
 
             # Extract text from response
             if message.content and len(message.content) > 0:
-                return message.content[0].text.strip()
+                first_block = message.content[0]
+                # Only TextBlock has the text attribute
+                if isinstance(first_block, TextBlock):
+                    return first_block.text.strip()
             return ""
         except Exception as e:
             # Silently fail if API call doesn't work
@@ -136,7 +146,11 @@ The team maintained strong collaboration patterns through regular standups, code
             # Group by repo and type
             by_repo: dict[str, dict[str, list[Activity]]] = {}
             for activity in activities:
-                repo = activity.metadata.get("repo", "unknown") if activity.metadata else "unknown"
+                repo = (
+                    activity.metadata.get("repo", "unknown")
+                    if activity.metadata
+                    else "unknown"
+                )
                 if repo not in by_repo:
                     by_repo[repo] = {}
                 if activity.activity_type not in by_repo[repo]:
@@ -154,7 +168,11 @@ The team maintained strong collaboration patterns through regular standups, code
             # Group by channel
             by_channel: dict[str, list[Activity]] = {}
             for activity in activities:
-                channel = activity.metadata.get("channel", "unknown") if activity.metadata else "unknown"
+                channel = (
+                    activity.metadata.get("channel", "unknown")
+                    if activity.metadata
+                    else "unknown"
+                )
                 if channel not in by_channel:
                     by_channel[channel] = []
                 by_channel[channel].append(activity)

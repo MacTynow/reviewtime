@@ -44,7 +44,9 @@ class SlackConnector(BaseConnector):
         except SlackApiError as e:
             raise ValueError(f"Invalid Slack token: {e}")
 
-    def fetch_activities(self, start_date: datetime, end_date: datetime) -> list[Activity]:
+    def fetch_activities(
+        self, start_date: datetime, end_date: datetime
+    ) -> list[Activity]:
         """Fetch Slack activities within the date range."""
         if not self.client:
             self.validate_config()
@@ -56,28 +58,38 @@ class SlackConnector(BaseConnector):
 
         # Fetch messages from each channel
         for channel in channels:
-            activities.extend(self._fetch_messages_from_channel(channel, start_date, end_date))
+            activities.extend(
+                self._fetch_messages_from_channel(channel, start_date, end_date)
+            )
 
         return sorted(activities)
 
     def _get_channels(self) -> list[dict[str, Any]]:
         """Get list of channels to monitor."""
+        # Ensure client is initialized
+        if self.client is None:
+            return []
+
         if self.channels:
             # Get specific channels
-            channels = []
+            channels: list[dict[str, Any]] = []
             for channel_id in self.channels:
                 try:
                     response = self.client.conversations_info(channel=channel_id)
-                    channels.append(response["channel"])
+                    channel = response.get("channel")
+                    if channel is not None:
+                        channels.append(channel)
                 except SlackApiError:
                     continue
             return channels
 
         # Get all public channels and private channels the user is in
-        all_channels = []
+        all_channels: list[dict[str, Any]] = []
         try:
             # Public channels
-            response = self.client.conversations_list(types="public_channel,private_channel")
+            response = self.client.conversations_list(
+                types="public_channel,private_channel"
+            )
             all_channels.extend(response.get("channels", []))
 
             # Direct messages
@@ -92,9 +104,13 @@ class SlackConnector(BaseConnector):
         self, channel: dict[str, Any], start_date: datetime, end_date: datetime
     ) -> list[Activity]:
         """Fetch messages from a specific channel."""
-        activities = []
+        activities: list[Activity] = []
         channel_id = channel["id"]
         channel_name = channel.get("name", channel_id)
+
+        # Ensure client is initialized
+        if self.client is None:
+            return activities
 
         try:
             # Convert datetime to Unix timestamp
@@ -123,7 +139,9 @@ class SlackConnector(BaseConnector):
                     Activity(
                         timestamp=timestamp,
                         title=f"Message in #{channel_name}{thread_context}",
-                        description=message.get("text", "")[:200],  # Truncate long messages
+                        description=message.get("text", "")[
+                            :200
+                        ],  # Truncate long messages
                         source=self.name,
                         activity_type="message",
                         url=self._get_message_url(channel_id, message["ts"]),
@@ -142,11 +160,20 @@ class SlackConnector(BaseConnector):
 
     def _get_message_url(self, channel_id: str, ts: str) -> str:
         """Generate Slack message URL."""
+        # Ensure client is initialized
+        if self.client is None:
+            return ""
+
         # Get workspace domain
         try:
             response = self.client.team_info()
-            team_domain = response["team"]["domain"]
+            team = response.get("team")
+            if team is None:
+                return ""
+            team_domain = team.get("domain", "")
             message_id = ts.replace(".", "")
-            return f"https://{team_domain}.slack.com/archives/{channel_id}/p{message_id}"
+            return (
+                f"https://{team_domain}.slack.com/archives/{channel_id}/p{message_id}"
+            )
         except SlackApiError:
             return ""

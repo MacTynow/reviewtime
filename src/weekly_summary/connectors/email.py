@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any
 
 from imap_tools.query import AND
-from imap_tools.mailbox import MailBox, MailBoxUnencrypted
+from imap_tools.mailbox import MailBox, MailBoxUnencrypted, BaseMailBox
 from imap_tools.message import MailMessage
 
 from .base import Activity, BaseConnector
@@ -48,23 +48,46 @@ class EmailConnector(BaseConnector):
 
         # Test connection
         try:
-            mailbox_class = MailBox if self.use_ssl else MailBoxUnencrypted
-            with mailbox_class(self.host, port=self.port).login(self.email, self.password):
+            mailbox_class: type[MailBox] | type[MailBoxUnencrypted] = (
+                MailBox if self.use_ssl else MailBoxUnencrypted
+            )
+            # At this point, we've validated that host, email, and password are not None
+            assert self.host is not None
+            assert self.email is not None
+            assert self.password is not None
+            with mailbox_class(self.host, port=self.port).login(
+                self.email, self.password
+            ):
                 return True
         except Exception as e:
             raise ValueError(f"Failed to connect to IMAP server: {e}")
 
-    def fetch_activities(self, start_date: datetime, end_date: datetime) -> list[Activity]:
+    def fetch_activities(
+        self, start_date: datetime, end_date: datetime
+    ) -> list[Activity]:
         """Fetch email activities within the date range."""
         activities = []
 
-        mailbox_class = MailBox if self.use_ssl else MailBoxUnencrypted
+        mailbox_class: type[MailBox] | type[MailBoxUnencrypted] = (
+            MailBox if self.use_ssl else MailBoxUnencrypted
+        )
 
-        with mailbox_class(self.host, port=self.port).login(self.email, self.password) as mailbox:
+        # Assertions for type checker - these will be validated by validate_config
+        assert self.host is not None
+        assert self.email is not None
+        assert self.password is not None
+
+        with mailbox_class(self.host, port=self.port).login(
+            self.email, self.password
+        ) as mailbox:
             for folder in self.folders:
                 try:
                     mailbox.folder.set(folder)
-                    activities.extend(self._fetch_emails_from_folder(mailbox, folder, start_date, end_date))
+                    activities.extend(
+                        self._fetch_emails_from_folder(
+                            mailbox, folder, start_date, end_date
+                        )
+                    )
                 except Exception:
                     # Skip folders we can't access
                     continue
@@ -72,7 +95,11 @@ class EmailConnector(BaseConnector):
         return sorted(activities)
 
     def _fetch_emails_from_folder(
-        self, mailbox: MailBox, folder: str, start_date: datetime, end_date: datetime
+        self,
+        mailbox: BaseMailBox,
+        folder: str,
+        start_date: datetime,
+        end_date: datetime,
     ) -> list[Activity]:
         """Fetch emails from a specific folder."""
         activities = []
@@ -80,7 +107,12 @@ class EmailConnector(BaseConnector):
         # Search for emails in date range
         # For sent folder, we want emails from the user
         # For inbox, we want emails to the user
-        criteria = AND(date_gte=start_date.date(), date_lte=end_date.date())
+        # Note: date_lt is "less than", so we add one day to include the end_date
+        from datetime import timedelta
+
+        criteria = AND(
+            date_gte=start_date.date(), date_lt=end_date.date() + timedelta(days=1)
+        )
 
         try:
             for msg in mailbox.fetch(criteria):
@@ -95,8 +127,11 @@ class EmailConnector(BaseConnector):
         # Determine if this is sent or received
         is_sent = folder.lower() in ["sent", "sent items", "sent mail"]
 
+        # Convert EmailAddress objects to strings
+        to_addresses = [str(addr) for addr in msg.to_values]
+
         if is_sent:
-            title = f"Sent email to {', '.join(msg.to_values)}"
+            title = f"Sent email to {', '.join(to_addresses)}"
             activity_type = "email_sent"
         else:
             title = f"Received email from {msg.from_}"
@@ -110,6 +145,9 @@ class EmailConnector(BaseConnector):
         # Use the message date (when it was sent/received)
         timestamp = msg.date
 
+        # Convert cc addresses as well
+        cc_addresses = [str(addr) for addr in msg.cc_values]
+
         return Activity(
             timestamp=timestamp,
             title=f"{title}: {msg.subject}",
@@ -120,8 +158,8 @@ class EmailConnector(BaseConnector):
             metadata={
                 "folder": folder,
                 "from": msg.from_,
-                "to": msg.to_values,
-                "cc": msg.cc_values,
+                "to": to_addresses,
+                "cc": cc_addresses,
                 "subject": msg.subject,
                 "has_attachments": len(msg.attachments) > 0,
             },

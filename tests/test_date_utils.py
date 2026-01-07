@@ -59,3 +59,34 @@ def test_parse_date_range_timezone():
 
     assert start.tzinfo == timezone.utc
     assert end.tzinfo == timezone.utc
+
+
+def test_get_last_week_range_on_monday(monkeypatch):
+    """Test get_last_week_range when today is Monday."""
+    from datetime import datetime, timedelta
+    from weekly_summary.utils import date_utils
+
+    # Create a fixed "now" that's a Monday at noon
+    fixed_monday = datetime(2024, 1, 8, 12, 0, 0, tzinfo=timezone.utc)
+    assert fixed_monday.weekday() == 0  # Verify it's Monday
+
+    # Monkeypatch datetime.now to return our fixed Monday
+    class MockDatetime:
+        @classmethod
+        def now(cls, tz=None):
+            return fixed_monday
+
+        @classmethod
+        def strptime(cls, date_string, format):
+            return datetime.strptime(date_string, format)
+
+    monkeypatch.setattr(date_utils, "datetime", MockDatetime)
+
+    start, end = get_last_week_range()
+
+    # When today is Monday, should go back to LAST Monday (7 days ago)
+    expected_monday = fixed_monday.replace(
+        hour=0, minute=0, second=0, microsecond=0
+    ) - timedelta(days=7)
+    assert start.weekday() == 0  # Start should be Monday
+    assert start.date() == expected_monday.date()  # Should be last Monday, not today

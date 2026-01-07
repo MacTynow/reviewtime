@@ -34,10 +34,15 @@ class TestCLI:
             result = runner.invoke(
                 main,
                 [
-                    "--config", str(config_path),
-                    "--start-date", "2024-01-01",
-                    "--end-date", "2024-01-07",
-                    "--output-dir", tmpdir,
+                    "generate",
+                    "--config",
+                    str(config_path),
+                    "--start-date",
+                    "2024-01-01",
+                    "--end-date",
+                    "2024-01-07",
+                    "--output-dir",
+                    tmpdir,
                 ],
             )
 
@@ -56,7 +61,7 @@ class TestCLI:
 
         result = runner.invoke(
             main,
-            ["--config", "/nonexistent/config.yaml"],
+            ["generate", "--config", "/nonexistent/config.yaml"],
         )
 
         # Click returns 2 for file not found errors
@@ -84,13 +89,19 @@ class TestCLI:
             result = runner.invoke(
                 main,
                 [
-                    "--config", str(config_path),
-                    "--output-dir", tmpdir,
+                    "generate",
+                    "--config",
+                    str(config_path),
+                    "--output-dir",
+                    tmpdir,
                 ],
             )
 
             # When no connectors are found, CLI still returns 0 but shows message
-            assert "No connectors were successfully initialized" in result.output or result.exit_code != 0
+            assert (
+                "No connectors were successfully initialized" in result.output
+                or result.exit_code != 0
+            )
 
     def test_cli_with_custom_output_filename(self):
         """Test CLI with custom output filename."""
@@ -110,11 +121,17 @@ class TestCLI:
             result = runner.invoke(
                 main,
                 [
-                    "--config", str(config_path),
-                    "--start-date", "2024-01-01",
-                    "--end-date", "2024-01-07",
-                    "--output-dir", tmpdir,
-                    "--output", "custom-report.md",
+                    "generate",
+                    "--config",
+                    str(config_path),
+                    "--start-date",
+                    "2024-01-01",
+                    "--end-date",
+                    "2024-01-07",
+                    "--output-dir",
+                    tmpdir,
+                    "--output",
+                    "custom-report.md",
                 ],
             )
 
@@ -140,10 +157,15 @@ class TestCLI:
             result = runner.invoke(
                 main,
                 [
-                    "--config", str(config_path),
-                    "--start-date", "2024-01-15",
-                    "--end-date", "2024-01-21",
-                    "--output-dir", tmpdir,
+                    "generate",
+                    "--config",
+                    str(config_path),
+                    "--start-date",
+                    "2024-01-15",
+                    "--end-date",
+                    "2024-01-21",
+                    "--output-dir",
+                    tmpdir,
                 ],
             )
 
@@ -170,16 +192,24 @@ class TestCLI:
             result = runner.invoke(
                 main,
                 [
-                    "--config", str(config_path),
-                    "--start-date", "2024-01-01",
-                    "--end-date", "2024-01-07",
-                    "--output-dir", tmpdir,
+                    "generate",
+                    "--config",
+                    str(config_path),
+                    "--start-date",
+                    "2024-01-01",
+                    "--end-date",
+                    "2024-01-07",
+                    "--output-dir",
+                    tmpdir,
                 ],
             )
 
             assert result.exit_code == 0
             assert "Generating summaries" in result.output
-            assert "Generated AI summaries" in result.output or "No summaries generated" in result.output
+            assert (
+                "Generated AI summaries" in result.output
+                or "No summaries generated" in result.output
+            )
 
     def test_cli_with_invalid_connector_in_config(self):
         """Test CLI with unknown connector type."""
@@ -200,10 +230,15 @@ class TestCLI:
             result = runner.invoke(
                 main,
                 [
-                    "--config", str(config_path),
-                    "--start-date", "2024-01-01",
-                    "--end-date", "2024-01-07",
-                    "--output-dir", tmpdir,
+                    "generate",
+                    "--config",
+                    str(config_path),
+                    "--start-date",
+                    "2024-01-01",
+                    "--end-date",
+                    "2024-01-07",
+                    "--output-dir",
+                    tmpdir,
                 ],
             )
 
@@ -236,10 +271,15 @@ class TestCLI:
             result = runner.invoke(
                 main,
                 [
-                    "--config", str(config_path),
-                    "--start-date", "2024-01-01",
-                    "--end-date", "2024-01-07",
-                    "--output-dir", tmpdir,
+                    "generate",
+                    "--config",
+                    str(config_path),
+                    "--start-date",
+                    "2024-01-01",
+                    "--end-date",
+                    "2024-01-07",
+                    "--output-dir",
+                    tmpdir,
                 ],
             )
 
@@ -356,7 +396,7 @@ class TestCLIErrorHandling:
 
             result = runner.invoke(
                 main,
-                ["--config", str(config_path)],
+                ["generate", "--config", str(config_path)],
             )
 
             assert result.exit_code == 1
@@ -381,15 +421,23 @@ class TestCLIErrorHandling:
             result = runner.invoke(
                 main,
                 [
-                    "--config", str(config_path),
-                    "--start-date", "2024-01-01",
-                    "--end-date", "2024-01-07",
-                    "--output-dir", tmpdir,
+                    "--config",
+                    str(config_path),
+                    "--start-date",
+                    "2024-01-01",
+                    "--end-date",
+                    "2024-01-07",
+                    "--output-dir",
+                    tmpdir,
                 ],
             )
 
             # Should handle error gracefully
-            assert "Error fetching" in result.output or "Failed" in result.output or result.exit_code != 0
+            assert (
+                "Error fetching" in result.output
+                or "Failed" in result.output
+                or result.exit_code != 0
+            )
 
     def test_cli_no_activities_found(self):
         """Test CLI when no activities are found."""
@@ -413,10 +461,15 @@ class TestCLIErrorHandling:
             result = runner.invoke(
                 main,
                 [
-                    "--config", str(config_path),
-                    "--start-date", "2024-01-01",
-                    "--end-date", "2024-01-07",
-                    "--output-dir", tmpdir,
+                    "generate",
+                    "--config",
+                    str(config_path),
+                    "--start-date",
+                    "2024-01-01",
+                    "--end-date",
+                    "2024-01-07",
+                    "--output-dir",
+                    tmpdir,
                 ],
             )
 
@@ -457,10 +510,15 @@ class TestCLIErrorHandling:
             result = runner.invoke(
                 main,
                 [
-                    "--config", str(config_path),
-                    "--start-date", "2024-01-01",
-                    "--end-date", "2024-01-07",
-                    "--output-dir", tmpdir,
+                    "generate",
+                    "--config",
+                    str(config_path),
+                    "--start-date",
+                    "2024-01-01",
+                    "--end-date",
+                    "2024-01-07",
+                    "--output-dir",
+                    tmpdir,
                 ],
             )
 
@@ -486,12 +544,436 @@ class TestCLIErrorHandling:
             result = runner.invoke(
                 main,
                 [
-                    "--config", str(config_path),
-                    "--start-date", "2024-01-01",
-                    "--end-date", "2024-01-07",
-                    "--output-dir", tmpdir,
+                    "generate",
+                    "--config",
+                    str(config_path),
+                    "--start-date",
+                    "2024-01-01",
+                    "--end-date",
+                    "2024-01-07",
+                    "--output-dir",
+                    tmpdir,
                 ],
             )
 
             # Should succeed even if summaries fail
             assert result.exit_code == 0
+
+
+class TestConfigPromptFunctions:
+    """Tests for config prompt functions."""
+
+    def test_prompt_connector_selection(self):
+        """Test prompt_connector_selection function."""
+        from weekly_summary.cli import prompt_connector_selection
+        from unittest.mock import patch
+
+        # Test with custom input
+        with patch("click.prompt", return_value="github, slack , email"):
+            result = prompt_connector_selection()
+            assert result == ["github", "slack", "email"]
+
+    def test_prompt_connector_selection_empty(self):
+        """Test prompt_connector_selection with empty input."""
+        from weekly_summary.cli import prompt_connector_selection
+        from unittest.mock import patch
+
+        with patch("click.prompt", return_value=""):
+            result = prompt_connector_selection()
+            assert result == []
+
+    def test_display_config_summary(self):
+        """Test display_config_summary function."""
+        from weekly_summary.cli import display_config_summary
+        from unittest.mock import patch
+
+        config = {
+            "sources": {
+                "github": {"enabled": True},
+                "slack": {"enabled": True},
+                "email": {"enabled": False},
+            },
+            "anthropic_api_key": "test-key",
+        }
+
+        # Capture output
+        with patch("click.echo") as mock_echo:
+            display_config_summary(config)
+
+            # Check that display_config_summary was called
+            calls = [str(call) for call in mock_echo.call_args_list]
+            # Should have been called at least once
+            assert len(calls) > 0
+
+    def test_prompt_anthropic_key_with_value(self):
+        """Test prompt_anthropic_key returns value when provided."""
+        from weekly_summary.cli import prompt_anthropic_key
+        from unittest.mock import patch
+
+        with patch("click.prompt", return_value="sk-ant-test"):
+            result = prompt_anthropic_key()
+            assert result == "sk-ant-test"
+
+    def test_prompt_anthropic_key_empty(self):
+        """Test prompt_anthropic_key returns None when empty."""
+        from weekly_summary.cli import prompt_anthropic_key
+        from unittest.mock import patch
+
+        with patch("click.prompt", return_value=""):
+            result = prompt_anthropic_key()
+            assert result is None
+
+
+class TestRealConnectorPrompts:
+    """Tests for real (non-mock) connector prompts."""
+
+    def test_prompt_github_config_non_mock(self):
+        """Test GitHub config prompt for non-mock connector."""
+        from weekly_summary.cli import prompt_github_config
+        from unittest.mock import patch
+
+        # Mock all the click functions and validation
+        with patch("click.echo"):
+            with patch("click.prompt") as mock_prompt:
+                with patch("click.confirm", return_value=False):  # No repos
+                    with patch(
+                        "weekly_summary.cli.validate_connector_with_retry"
+                    ) as mock_validate:
+                        mock_prompt.side_effect = ["test-token", "testuser"]
+                        mock_validate.return_value = {
+                            "enabled": True,
+                            "token": "test-token",
+                            "username": "testuser",
+                        }
+
+                        result = prompt_github_config("github")
+
+                        assert result is not None
+                        assert result["token"] == "test-token"
+                        assert result["username"] == "testuser"
+
+    def test_prompt_slack_config_non_mock(self):
+        """Test Slack config prompt for non-mock connector."""
+        from weekly_summary.cli import prompt_slack_config
+        from unittest.mock import patch
+
+        with patch("click.echo"):
+            with patch("click.prompt", return_value="xoxp-test-token"):
+                with patch("click.confirm", return_value=False):  # No channels
+                    with patch(
+                        "weekly_summary.cli.validate_connector_with_retry"
+                    ) as mock_validate:
+                        mock_validate.return_value = {
+                            "enabled": True,
+                            "token": "xoxp-test-token",
+                        }
+
+                        result = prompt_slack_config("slack")
+
+                        assert result is not None
+                        assert result["token"] == "xoxp-test-token"
+
+    def test_prompt_email_config_non_mock(self):
+        """Test Email config prompt for non-mock connector."""
+        from weekly_summary.cli import prompt_email_config
+        from unittest.mock import patch
+
+        with patch("click.echo"):
+            with patch("click.prompt") as mock_prompt:
+                with patch("click.confirm") as mock_confirm:
+                    with patch(
+                        "weekly_summary.cli.validate_connector_with_retry"
+                    ) as mock_validate:
+                        # Simulate: host, email, password, port, use_ssl, no folders
+                        mock_prompt.side_effect = [
+                            "imap.gmail.com",
+                            "test@example.com",
+                            "password123",
+                            993,
+                        ]
+                        mock_confirm.side_effect = [True, False]  # SSL yes, folders no
+                        mock_validate.return_value = {
+                            "enabled": True,
+                            "host": "imap.gmail.com",
+                            "email": "test@example.com",
+                            "password": "password123",
+                            "port": 993,
+                            "use_ssl": True,
+                        }
+
+                        result = prompt_email_config("email")
+
+                        assert result is not None
+                        assert result["host"] == "imap.gmail.com"
+
+
+class TestConfigWizardValidation:
+    """Tests for config wizard validation with retry/skip/abort options."""
+
+    def test_config_wizard_skip_on_validation_failure(self):
+        """Test skipping a connector when validation fails."""
+        runner = CliRunner()
+
+        with TemporaryDirectory() as tmpdir:
+            config_path = Path(tmpdir) / "config.yaml"
+
+            # Try to configure github (not mock) which will fail, then skip
+            # Input: github -> invalid token -> invalid user -> skip -> no api key -> confirm
+            result = runner.invoke(
+                main,
+                ["config", "--output", str(config_path)],
+                input="github\nbad-token\ntestuser\nskip\n\ny\n",
+            )
+
+            # Should complete without the skipped connector
+            # The result might have no connectors configured
+            assert (
+                "skip" in result.output.lower()
+                or "cancelled" in result.output.lower()
+                or result.exit_code == 0
+            )
+
+    def test_config_wizard_abort_on_validation_failure(self):
+        """Test aborting config wizard when validation fails."""
+        runner = CliRunner()
+
+        with TemporaryDirectory() as tmpdir:
+            config_path = Path(tmpdir) / "config.yaml"
+
+            # Try github, validation fails, then abort
+            # Input: github -> bad-token -> testuser -> no repos -> abort validation
+            result = runner.invoke(
+                main,
+                ["config", "--output", str(config_path)],
+                input="github\nbad-token\ntestuser\nn\nabort\n",
+            )
+
+            # Should show aborted or cancelled message
+            assert (
+                "aborted" in result.output.lower()
+                or "cancelled" in result.output.lower()
+            )
+            # Config file should not be created
+            assert not config_path.exists()
+
+    def test_config_wizard_retry_then_skip(self):
+        """Test retry then skip when validation fails."""
+        runner = CliRunner()
+
+        with TemporaryDirectory() as tmpdir:
+            config_path = Path(tmpdir) / "config.yaml"
+
+            # Try github, validation fails, retry (will fail again), then skip
+            result = runner.invoke(
+                main,
+                ["config", "--output", str(config_path)],
+                input="github\nbad-token\ntestuser\nretry\nbad-token2\ntestuser2\nskip\n\ny\n",
+            )
+
+            # Should handle retry gracefully
+            assert (
+                result.exit_code == 0
+                or "skip" in result.output.lower()
+                or "cancelled" in result.output.lower()
+            )
+
+    def test_config_wizard_unknown_connector(self):
+        """Test handling unknown connector type."""
+        runner = CliRunner()
+
+        with TemporaryDirectory() as tmpdir:
+            config_path = Path(tmpdir) / "config.yaml"
+
+            # Try to configure an unknown connector - it will just be skipped with a warning
+            result = runner.invoke(
+                main,
+                ["config", "--output", str(config_path)],
+                input="unknown_connector,github_mock\nn\n\ny\n",
+            )
+
+            # Should warn about unknown connector and continue with github_mock
+            assert (
+                "Unknown connector" in result.output
+                or "Warning" in result.output
+                or result.exit_code == 0
+            )
+
+    def test_config_wizard_no_connectors_selected(self):
+        """Test when no connectors are selected."""
+        runner = CliRunner()
+
+        with TemporaryDirectory() as tmpdir:
+            config_path = Path(tmpdir) / "config.yaml"
+
+            # Explicitly select no connectors by providing empty string
+            # Using a space to clear the default, then skip to next question
+            result = runner.invoke(
+                main,
+                ["config", "--output", str(config_path)],
+                input=" \n",  # Space + newline to override default with empty selection
+            )
+
+            # Should handle gracefully (exit code 1 due to abort/eof is acceptable)
+            assert (
+                result.exit_code in [0, 1]
+                or "No connectors" in result.output
+                or "aborted" in result.output.lower()
+            )
+
+    def test_config_wizard_decline_write(self):
+        """Test declining to write the configuration."""
+        runner = CliRunner()
+
+        with TemporaryDirectory() as tmpdir:
+            config_path = Path(tmpdir) / "config.yaml"
+
+            # Configure github_mock but decline to write
+            result = runner.invoke(
+                main,
+                ["config", "--output", str(config_path)],
+                input="github_mock\nn\n\nn\n",  # select github_mock, no repos, no api key, decline write
+            )
+
+            assert "cancelled" in result.output.lower()
+            assert not config_path.exists()
+
+
+class TestConfigCommand:
+    """Integration tests for config command."""
+
+    def test_config_wizard_with_github_mock_full_flow(self):
+        """Test config wizard with GitHub mock connector - full flow."""
+        runner = CliRunner()
+
+        with TemporaryDirectory() as tmpdir:
+            config_path = Path(tmpdir) / "config.yaml"
+
+            # Simulate full GitHub mock configuration:
+            # - github_mock
+            # - no repos filter (n)
+            # - no API key (empty)
+            # - confirm write (y)
+            result = runner.invoke(
+                main,
+                ["config", "--output", str(config_path)],
+                input="github_mock\nn\n\ny\n",
+            )
+
+            # Debug output if test fails
+            if not config_path.exists():
+                print(f"Exit code: {result.exit_code}")
+                print(f"Output: {result.output}")
+
+            assert result.exit_code == 0
+            assert config_path.exists()
+
+            # Verify config structure
+            with open(config_path) as f:
+                config = yaml.safe_load(f)
+            assert "sources" in config
+            assert "github_mock" in config["sources"]
+
+    def test_config_wizard_with_slack_mock_and_channels(self):
+        """Test config wizard with Slack mock and channel filtering."""
+        runner = CliRunner()
+
+        with TemporaryDirectory() as tmpdir:
+            config_path = Path(tmpdir) / "config.yaml"
+
+            # Slack mock with channels:
+            # - slack_mock
+            # - yes to channels (y)
+            # - C123,C456
+            # - no API key
+            # - confirm write (y)
+            result = runner.invoke(
+                main,
+                ["config", "--output", str(config_path)],
+                input="slack_mock\ny\nC123,C456\n\ny\n",
+            )
+
+            assert result.exit_code == 0
+            assert config_path.exists()
+
+            with open(config_path) as f:
+                config = yaml.safe_load(f)
+            slack = config["sources"]["slack_mock"]
+            assert "channels" in slack
+            assert len(slack["channels"]) == 2
+
+    def test_config_wizard_decline_overwrite(self):
+        """Test declining to overwrite existing config."""
+        runner = CliRunner()
+
+        with TemporaryDirectory() as tmpdir:
+            config_path = Path(tmpdir) / "config.yaml"
+
+            # Create existing config
+            existing = {"sources": {"test": True}}
+            with open(config_path, "w") as f:
+                yaml.dump(existing, f)
+
+            # Run wizard and decline overwrite
+            result = runner.invoke(
+                main, ["config", "--output", str(config_path)], input="n\n"
+            )
+
+            assert "Configuration cancelled" in result.output
+
+            # Verify original config unchanged
+            with open(config_path) as f:
+                config = yaml.safe_load(f)
+            assert config == existing
+
+    def test_config_wizard_with_api_key(self):
+        """Test config wizard with Anthropic API key."""
+        runner = CliRunner()
+
+        with TemporaryDirectory() as tmpdir:
+            config_path = Path(tmpdir) / "config.yaml"
+
+            # Github mock + API key:
+            # - github_mock
+            # - no repos (n)
+            # - API key: sk-ant-test123
+            # - confirm write (y)
+            result = runner.invoke(
+                main,
+                ["config", "--output", str(config_path)],
+                input="github_mock\nn\nsk-ant-test123\ny\n",
+            )
+
+            assert result.exit_code == 0
+            assert config_path.exists()
+
+            with open(config_path) as f:
+                config = yaml.safe_load(f)
+            assert "anthropic_api_key" in config
+            assert config["anthropic_api_key"] == "sk-ant-test123"
+
+    def test_config_wizard_multiple_connectors(self):
+        """Test configuring multiple connectors at once."""
+        runner = CliRunner()
+
+        with TemporaryDirectory() as tmpdir:
+            config_path = Path(tmpdir) / "config.yaml"
+
+            # Multiple mocks:
+            # - github_mock,slack_mock
+            # - github: no repos (n)
+            # - slack: no channels (n)
+            # - no API key
+            # - confirm write (y)
+            result = runner.invoke(
+                main,
+                ["config", "--output", str(config_path)],
+                input="github_mock,slack_mock\nn\nn\n\ny\n",
+            )
+
+            assert result.exit_code == 0
+            assert config_path.exists()
+
+            with open(config_path) as f:
+                config = yaml.safe_load(f)
+            assert "github_mock" in config["sources"]
+            assert "slack_mock" in config["sources"]

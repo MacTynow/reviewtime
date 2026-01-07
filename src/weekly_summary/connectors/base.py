@@ -36,7 +36,9 @@ class BaseConnector(ABC):
         self.config = config
 
     @abstractmethod
-    def fetch_activities(self, start_date: datetime, end_date: datetime) -> list[Activity]:
+    def fetch_activities(
+        self, start_date: datetime, end_date: datetime
+    ) -> list[Activity]:
         """
         Fetch activities from the data source within the specified date range.
 
